@@ -13,7 +13,7 @@ const center = {
 
 const onMapLoad = (map) => {
   console.log('map.data ', map.data)
-  map.data.loadGeoJson('frontend/src/assets/cartoboundary/californiaCountyData.geojson');
+  map.data.loadGeoJson('https://gist.githubusercontent.com/wavded/1200773/raw/e122cf709898c09758aecfef349964a8d73a83f3/sample.json');
 }
 
 const onClick = (...args) => {
@@ -37,7 +37,7 @@ const MapSelection = () => {
         <GoogleMap
           mapContainerStyle={containerStyle}
           center={center}
-          zoom={5}
+          zoom={6}
           onClick={onClick}
           onLoad={onMapLoad}
         
