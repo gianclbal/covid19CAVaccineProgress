@@ -1,27 +1,59 @@
-import React from "react"
-import { compose, withProps } from "recompose"
-import { withScriptjs, withGoogleMap, GoogleMap, KmlLayer } from "react-google-maps"
+import React, { useState } from "react";
+import { GoogleMap, LoadScript, Data } from '@react-google-maps/api';
 
-const MapWithAKmlLayer = compose(
-  withProps({
-    googleMapURL: "https://maps.googleapis.com/maps/api/js?key=AIzaSyBbZ_4gGuYUsjwcMNltvEIFxJtVmtuyBGE&libraries=geometry,drawing,places",
-    loadingElement: <div style={{ height: `100%` }} />,
-    containerElement: <div style={{ height: `400px` }} />,
-    mapElement: <div style={{ height: `100%` }} />,
-  }),
-  withScriptjs,
-  withGoogleMap
-)(props =>
-  <GoogleMap
-    defaultZoom={9}
-    defaultCenter={{ lat: 41.9, lng: -87.624 }}
-  >
-    <KmlLayer
-      url="https://developers.google.com/maps/documentation/javascript/examples/kml/westcampus.kml"
-      options={{ preserveViewport: true }}
-    />
-  </GoogleMap>
-);
+const containerStyle = {
+  width: 'auto',
+  height: '800px'
+};
 
-export default MapWithAKmlLayer;
+const center = {
+  lat: 38.575764,
+  lng: -121.478851
+};
 
+const onMapLoad = (map) => {
+  console.log('map.data ', map.data)
+  map.data.loadGeoJson('frontend/src/assets/cartoboundary/californiaCountyData.geojson');
+}
+
+const onClick = (...args) => {
+  console.log('onClick args: ', args[0].latLng.lat(), ' : ', args[0].latLng.lng())
+}
+
+const onDataLoad = data => {
+  console.log('data: ', data)
+}
+
+
+const MapSelection = () => {
+  const [map, setMap] = useState('');
+  const [dataLayer, setDataLayer] = useState('');
+
+  return (
+    <div>
+      <LoadScript
+        googleMapsApiKey="AIzaSyBbZ_4gGuYUsjwcMNltvEIFxJtVmtuyBGE"
+      >
+        <GoogleMap
+          mapContainerStyle={containerStyle}
+          center={center}
+          zoom={5}
+          onClick={onClick}
+          onLoad={onMapLoad}
+        
+        >
+          <Data
+            onLoad={onDataLoad}
+
+          />
+          { /* Child components, such as markers, info windows, etc. */}
+          <></>
+        </GoogleMap>
+      </LoadScript>
+    </div>
+  )
+
+
+};
+
+export default MapSelection;
