@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { GoogleMap, LoadScript, Data } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Data, InfoWindow } from '@react-google-maps/api';
 
 const containerStyle = {
   width: 'auto',
   height: '800px'
 };
+
 
 const center = {
   lat: 38.575764,
@@ -13,17 +14,44 @@ const center = {
 
 const onMapLoad = (map) => {
   console.log('map.data ', map.data)
-  map.data.loadGeoJson('https://gist.githubusercontent.com/wavded/1200773/raw/e122cf709898c09758aecfef349964a8d73a83f3/sample.json');
+  map.data.loadGeoJson('https://raw.githubusercontent.com/gianclbal/covid19CAVaccineProgress/main/frontend/src/assets/cartoboundary/archives/californiaCountyData.json');
+  onDataLoad(map.data);
+}
+
+
+
+const onInfoWindowLoad = infoWindow => {
+
 }
 
 const onClick = (...args) => {
-  console.log('onClick args: ', args[0].latLng.lat(), ' : ', args[0].latLng.lng())
+  let current = {
+    currentLat: args[0].latLng.lat(),
+    currentLng: args[0].latLng.lng(),
+  }
+  
+  console.log('onClick args: ', current.currentLat, ' : ', current.currentLng)
+
+  return current;
 }
+
 
 const onDataLoad = data => {
   console.log('data: ', data)
-}
+  data.setStyle((feature) => {
+    let color = "gray";
 
+    if (feature.getProperty("isColorful")) {
+      color = feature.getProperty("color");
+    }
+    return /** @type {!google.maps.Data.StyleOptions} */ {
+      fillColor: color,
+      strokeColor: color,
+      strokeWeight: 1,
+    };
+  });
+
+}
 
 const MapSelection = () => {
   const [map, setMap] = useState('');
@@ -40,13 +68,25 @@ const MapSelection = () => {
           zoom={6}
           onClick={onClick}
           onLoad={onMapLoad}
+       
         
         >
           <Data
             onLoad={onDataLoad}
+           
+         
 
           />
           { /* Child components, such as markers, info windows, etc. */}
+          {/* <InfoWindow
+          onLoad={onInfoWindowLoad}
+          
+          
+          >
+            <div>
+              <h1>County name</h1>
+            </div>
+            </InfoWindow> */}
           <></>
         </GoogleMap>
       </LoadScript>
